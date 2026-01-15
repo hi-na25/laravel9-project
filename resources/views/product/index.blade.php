@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">
                     商品情報一覧
-                    <a href="{{ route('item.create') }}" class="btn btn-sm btn-primary float-end">新規登録</a>
+                    <a href="{{ route('products.create') }}" class="btn btn-sm btn-primary float-end">新規登録</a>
                 </div>
 
                 <div class="card-body">
@@ -18,7 +18,7 @@
                         </div>   
                     @endif
 
-                    <form method="GET" action="{{ route('item.index') }}" class="mb-4">
+                    <form method="GET" action="{{ route('products.index') }}" class="mb-4">
                         <div class="row">
                             {{-- 商品名検索 --}}
                             <div class="col-md-4">
@@ -35,9 +35,9 @@
                             </div>
 
                             {{-- 検索ボタン --}}
-                            <div class="col-md-4 d-flex align-items-end">
+                            <div class="col-md-4 d-flex align-products-end">
                                 <button type="submit" class="btn btn-info text-white me-2">検索</button>
-                                <a href="{{ route('item.index') }}" class="btn btn-secondary">リセット</a>
+                                <a href="{{ route('products.index') }}" class="btn btn-secondary">リセット</a>
                             </div>
                         </div>
                     </form>
@@ -56,29 +56,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($items as $item)
+                            @foreach ($products as $product)
                                 <tr>
-                                    <td>{{ $item->id }}</td>
-                                    <td>{{ $item->name }}</td>
-                                    <td>{{ $item->maker }}</td>
+                                    <td>{{ $product->id }}</td>
+                                    <td>{{ $product->name }}</td>
+                                    <td>{{ $product->company->company_name }}</td>
                                     {{-- ★画像表示用の<td>を追加。ファイルパスがある場合のみ画像を仮表示 --}}
                                     <td>
-                                        @if ($item->image_path)
-                                        <img src="{{ asset('storage/' . $item->image_path) }}" 
-                                         alt="{{ $item->name }}の画像" 
+                                        @if ($product->img_path)
+                                        <img src="{{ asset('storage/' . $product->img_path) }}" width="50">
+                                         alt="{{ $product->name }}の画像" 
                                          style="width: 100px; height: auto;">
                                         @else
                                             なし
                                        @endif
                                     </td>
-                                    <td>¥{{ number_format($item->price) }}</td>
-                                    <td>{{ $item->stock }}</td>
-                                    <td>{{ Str::limit($item->comment, 30) }}</td>
+                                    <td>¥{{ number_format($product->price) }}</td>
+                                    <td>{{ $product->stock }}</td>
+                                    <td>{{ Str::limit($product->comment, 30) }}</td>
                                     <td>
-                                        <a href="{{ route('item.show', ['item' => $item->id]) }}" class="btn btn-sm btn-info me-2">詳細</a>
-                                        <a href="{{ route('item.edit', ['item' => $item->id]) }}" class="btn btn-sm btn-success">編集</a>
+                                        <a href="{{ route('products.show', ['product' => $product->id]) }}" class="btn btn-sm btn-info me-2">詳細</a>
+                                        <a href="{{ route('products.edit', ['product' => $product->id]) }}" class="btn btn-sm btn-success">編集</a>
                                         {{-- ★削除ボタン用のフォームを追加 --}}
-                                        <form action="{{ route('item.destroy', ['item' => $item->id]) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('products.destroy', ['product' => $product->id]) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('本当に削除しますか？')">削除</button>

@@ -7,21 +7,26 @@
             <div class="card">
                 <div class="card-header">
                     商品新規登録
-                    <a href="{{ route('item.index') }}" class="btn btn-sm btn-secondary float-end">一覧に戻る</a>
+                    <a href="{{ route('products.index') }}" class="btn btn-sm btn-secondary float-end">一覧に戻る</a>
                 </div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('item.store') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="mb-3">
                             <label for="name" class="form-label">商品名 <span class="badge bg-danger">必須</span></label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input type="text" class="form-control" id="name" name="product_name" required>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="maker" class="form-label">メーカー</label>
-                            <input type="text" class="form-control" id="maker" name="maker">
+                            <label for="company_id" class="form-label">メーカー <span class="badge bg-danger">必須</span></label>
+                            <select class="form-select" id="company_id" name="company_id" required>
+                                <option value="">メーカーを選択してください</option>
+                                @foreach($companies as $company)
+                                    <option value="{{ $company->id }}">{{ $company->company_name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         
                         <div class="mb-3">
