@@ -29,9 +29,9 @@
 
                             {{-- メーカー名検索（一時的にテキストボックス） --}}
                             <div class="col-md-4">
-                                <label for="maker" class="form-label">メーカー名</label>
-                                <input type="text" class="form-control" id="maker" name="maker" 
-                                       value="{{ request('maker') }}" placeholder="メーカー名を入力">
+                                <label for="company_id" class="form-label">メーカー名</label>
+                                <input type="text" class="form-control" id="company_id" name="company_id" 
+                                       value="{{ request('company_id') }}" placeholder="メーカー名を入力">
                             </div>
 
                             {{-- 検索ボタン --}}

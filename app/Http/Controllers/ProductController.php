@@ -22,13 +22,15 @@ class productController extends Controller
         $query = product::query();
 
        // 商品名 (name) で検索
-       if ($request->name) {
-           $query->where('name', 'like', '%' . $request->name . '%');
+       if ($request->keyword) {
+           $query->where('product_name', 'like', '%' . $request->keyword . '%');
         }
 
        // メーカー (maker) で検索
-       if ($request->maker) {
-           $query->where('maker', 'like', '%' . $request->maker . '%');
+       if ($request->company_id) {
+           $query->whereHas('company', function($q) use ($request) {
+               $q->where('company_name', 'like', '%' . $request->company_id . '%');
+           });
         }
     
        // 絞り込み後のデータを取得
