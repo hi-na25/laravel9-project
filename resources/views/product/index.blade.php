@@ -59,16 +59,15 @@
                             @foreach ($products as $product)
                                 <tr>
                                     <td>{{ $product->id }}</td>
-                                    <td>{{ $product->name }}</td>
+                                    <td>{{ $product->product_name }}</td>
                                     <td>{{ $product->company->company_name }}</td>
                                     {{-- ★画像表示用の<td>を追加。ファイルパスがある場合のみ画像を仮表示 --}}
                                     <td>
-                                        @if ($product->img_path)
-                                        <img src="{{ asset('storage/' . $product->img_path) }}" width="50">
-                                         alt="{{ $product->name }}の画像" 
-                                         style="width: 100px; height: auto;">
-                                        @else
-                                            なし
+                                        @if($product->img_path)
+                                            {{-- storage フォルダの中身を見に行くように asset を使います --}}
+                                            <img src="{{ asset('storage/' . $product->img_path) }}" style="width: 100px; height: auto;">
+                                       @else
+                                            <span>画像なし</span>
                                        @endif
                                     </td>
                                     <td>¥{{ number_format($product->price) }}</td>
