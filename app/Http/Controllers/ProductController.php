@@ -70,10 +70,10 @@ class productController extends Controller
         'img_path' => 'nullable|image|max:2048',
     ]);
 
-    $image_path = null;
-    if ($request->hasFile('image_path')) {
+    $img_path = null;
+    if ($request->hasFile('img_path')) {
         // public/products ディレクトリに画像を保存し、保存先パスを取得
-        $image_path = $request->file('image_path')->store('public/products');
+        $img_path = $request->file('img_path')->store('public/products');
     }
 
     // 2. データの保存処理（画像のアップロード処理はここでは省略し、後に実装します）
@@ -87,7 +87,7 @@ class productController extends Controller
     $product->stock = $request->stock;
     $product->company_id = $request->company_id;
     $product->comment = $request->comment;
-    $product->img_path = $image_path;
+    $product->img_path = $img_path;
     
     // データをデータベースに保存
     $product->save();
@@ -136,17 +136,17 @@ class productController extends Controller
            'stock' => 'required|integer', 
            'company_id' => 'required|integer', 
            'comment' => 'nullable', 
-           'img_path' => 'nullable|image|max:2048', 
+           'img_path' => 'nullable|img|max:2048', 
     ]);
 
     // ★画像ファイルの処理ロジックの追加
-    if ($request->hasFile('image_path')) {
+    if ($request->hasFile('img_path')) {
         // 既存の画像ファイルがあれば削除
-        if ($product->image_path) {
-            Storage::delete('public/' .$product->image_path);
+        if ($product->img_path) {
+            Storage::delete('public/' .$product->img_path);
         }
         // 新しい画像を保存
-       $path = $request->file('image_path')->store('public/products');
+       $path = $request->file('img_path')->store('public/products');
        
        // DBに保存するために 'public/' のプレフィックスを削除
        $filename = str_replace('public/', '', $path);
@@ -184,16 +184,16 @@ class productController extends Controller
     
         $product_name = $product->name; // 削除前に商品名を保存
     
-        if ($product->image_path) {
+        if ($product->img_path) {
         // サーバー上のファイルを削除
-        Storage::delete('public/' . $product->image_path);
+        Storage::delete('public/' . $product->img_path);
         }
 
         // データをデータベースから削除
         $product->delete();
     
         // 処理完了後、商品一覧画面へリダイレクト
-        return redirect()->route('product.index')->with('success', '商品「' . $product_name . '」を削除しました。');
+        return redirect()->route('products.index')->with('success', '商品「' . $product_name . '」を削除しました。');
     }
 
 }

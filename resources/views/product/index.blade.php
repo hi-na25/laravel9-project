@@ -65,7 +65,7 @@
                                     <td>
                                         @if($product->img_path)
                                             {{-- storage フォルダの中身を見に行くように asset を使います --}}
-                                            <img src="{{ asset('storage/' . $product->img_path) }}" style="width: 100px; height: auto;">
+                                            <img src="{{ asset('storage/' . str_replace('public/', '', $product->img_path)) }}" style="width: 100px; height: auto;">
                                        @else
                                             <span>画像なし</span>
                                        @endif

@@ -45,8 +45,8 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="image_path" class="form-label">商品画像</label>
-                            <input class="form-control" type="file" id="image_path" name="image_path">
+                            <label for="img_path" class="form-label">商品画像</label>
+                            <input class="form-control" type="file" id="img_path" name="img_path">
                         </div>
 
                         <button type="submit" class="btn btn-primary">登録する</button>
