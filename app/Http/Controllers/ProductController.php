@@ -15,6 +15,9 @@ class productController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request) {
+
+        $companies = Company::all();
+
         // 1. 商品モデル（product.php）を使って、productsテーブルの全データを取得
         $products = product::all();
 
@@ -28,16 +31,14 @@ class productController extends Controller
 
        // メーカー (maker) で検索
        if ($request->company_id) {
-           $query->whereHas('company', function($q) use ($request) {
-               $q->where('company_name', 'like', '%' . $request->company_id . '%');
-           });
+           $query->where('company_id', $request->company_id);
         }
     
        // 絞り込み後のデータを取得
        $products = $query->get();
 
         // 2. 取得した商品データ ($products) を一覧画面 ('product.index') に渡して表示
-        return view('product.index', compact('products'));
+        return view('product.index', compact('products', 'companies'));
     }
 
     /**

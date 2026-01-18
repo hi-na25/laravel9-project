@@ -29,15 +29,20 @@
 
                             {{-- メーカー名検索（一時的にテキストボックス） --}}
                             <div class="col-md-4">
-                                <label for="company_id" class="form-label">メーカー名</label>
-                                <input type="text" class="form-control" id="company_id" name="company_id" 
-                                       value="{{ request('company_id') }}" placeholder="メーカー名を入力">
-                            </div>
+                               <label for="company_id" class="form-label">メーカー名</label>
+                               <select name="company_id" class="form-select" id="company_id">
+                                   <option value="">メーカー名を選択</option>
+                                   @foreach($companies as $company)
+                                       <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                                          {{ $company->company_name }}
+                                   </option>
+                                   @endforeach
+                              </select>
+                           </div>
 
                             {{-- 検索ボタン --}}
                             <div class="col-md-4 d-flex align-products-end">
                                 <button type="submit" class="btn btn-info text-white me-2">検索</button>
-                                <a href="{{ route('products.index') }}" class="btn btn-secondary">リセット</a>
                             </div>
                         </div>
                     </form>
@@ -51,7 +56,6 @@
                                 <th>画像</th>
                                 <th>価格</th>
                                 <th>在庫数</th>
-                                <th>コメント</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -71,11 +75,8 @@
                                        @endif
                                     </td>
                                     <td>¥{{ number_format($product->price) }}</td>
-                                    <td>{{ $product->stock }}</td>
-                                    <td>{{ Str::limit($product->comment, 30) }}</td>
-                                    <td>
+                                    <td>{{ $product->stock }}</td>                                    <td>
                                         <a href="{{ route('products.show', ['product' => $product->id]) }}" class="btn btn-sm btn-info me-2">詳細</a>
-                                        <a href="{{ route('products.edit', ['product' => $product->id]) }}" class="btn btn-sm btn-success">編集</a>
                                         {{-- ★削除ボタン用のフォームを追加 --}}
                                         <form action="{{ route('products.destroy', ['product' => $product->id]) }}" method="POST" class="d-inline">
                                             @csrf
