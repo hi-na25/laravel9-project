@@ -71,31 +71,31 @@ class productController extends Controller
         'img_path' => 'nullable|image|max:2048',
     ]);
 
-    $img_path = null;
-    if ($request->hasFile('img_path')) {
-        // public/products ディレクトリに画像を保存し、保存先パスを取得
-        $img_path = $request->file('img_path')->store('public/products');
-    }
+    try {
+        $img_path = null;
+        if ($request->hasFile('img_path')) {
+            $path = $request->file('img_path')->store('public/products');
+            $img_path = str_replace('public/', '', $path);
+        }
 
-    // 2. データの保存処理（画像のアップロード処理はここでは省略し、後に実装します）
-    
-    // 商品モデルをインスタンス化
-    $product = new product();
-    
-    // リクエストからデータを受け取り、モデルにセット
-    $product->product_name = $request->product_name;
-    $product->price = $request->price;
-    $product->stock = $request->stock;
-    $product->company_id = $request->company_id;
-    $product->comment = $request->comment;
-    $product->img_path = $img_path;
-    
-    // データをデータベースに保存
-    $product->save();
-    
-    // 3. 処理完了後、商品一覧画面へリダイレクト
-    return redirect()->route('products.index')->with('success', '商品を登録しました。');
+        $product = new Product();
+        $product->product_name = $request->product_name;
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->company_id = $request->company_id;
+        $product->comment = $request->comment;
+        $product->img_path = $img_path;
+
+        $product->save();
+
+        return redirect()->route('products.index')->with('success', '商品を登録しました。');
+
+    } catch (\Exception $e) {
+        \Log::error($e->getMessage());
+        return back()->withInput()->withErrors(['error' => '登録に失敗しました。']);
     }
+}
+    
 
     /**
      * Display the specified resource.
@@ -129,72 +129,66 @@ class productController extends Controller
      * @param  \App\Models\product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, product $product) {
-        // 1. バリデーション（新規登録時と同じ）
+    public function update(Request $request, $id) 
+    {
+        // 1. バリデーション (指摘3)
         $request->validate([
-           'product_name' => 'required|max:100', 
-           'price' => 'required|integer', 
-           'stock' => 'required|integer', 
-           'company_id' => 'required|integer', 
-           'comment' => 'nullable', 
-           'img_path' => 'nullable|img|max:2048', 
-    ]);
+            'product_name' => 'required|max:100',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+            'company_id' => 'required|exists:companies,id',
+            'comment' => 'nullable',
+            'img_path' => 'nullable|image|max:2048',
+        ]);
 
-    // ★画像ファイルの処理ロジックの追加
-    if ($request->hasFile('img_path')) {
-        // 既存の画像ファイルがあれば削除
-        if ($product->img_path) {
-            Storage::delete('public/' .$product->img_path);
+        // 2. try-catch文 (指摘4)
+        try {
+            $product = Product::find($id);
+
+            // 3. 画像の更新処理 (指摘1)
+            if ($request->hasFile('img_path')) { 
+                $path = $request->file('img_path')->store('public/products');
+                $product->img_path = str_replace('public/', '', $path);
+            }
+
+            $product->product_name = $request->product_name;
+            $product->price = $request->price;
+            $product->stock = $request->stock;
+            $product->company_id = $request->company_id;
+            $product->comment = $request->comment;
+
+            $product->save();
+
+            return redirect()->route('products.index');
+
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return back()->withInput()->withErrors(['error' => '更新に失敗しました。']);
         }
-        // 新しい画像を保存
-       $path = $request->file('img_path')->store('public/products');
-       
-       // DBに保存するために 'public/' のプレフィックスを削除
-       $filename = str_replace('public/', '', $path);
-
-       // 新しいパスをモデルにセット
-       $product->img_path = $filename;
     }
+    public function destroy(Product $product)
+    {
+        // 指摘4: try-catch文を追加
+        try {
+            // 削除前に商品名を保存（メッセージ用）
+            $product_name = $product->product_name;
 
-        // 2. データの更新処理
-    
-        // $product には、編集対象の商品モデルが自動的に入っている
-    
-        // リクエストからデータを受け取り、モデルにセット
-        $product->product_name = $request->product_name;
-        $product->price = $request->price;
-        $product->stock = $request->stock;
-        $product->company_id = $request->company_id;
-        $product->comment = $request->comment;
-    
-        // データをデータベースに保存（更新）
-        $product->save();
-    
-        // 3. 処理完了後、商品一覧画面へリダイレクト
-        return redirect()->route('products.index')->with('success', '商品「' . $product->name . '」の情報を更新しました。');
-    }
+            // 画像があればサーバーから削除
+            if ($product->img_path) {
+                \Storage::delete('public/' . $product->img_path);
+            }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(product $product) {
-        // $product には削除対象の商品モデルが自動的に入っている
-    
-        $product_name = $product->name; // 削除前に商品名を保存
-    
-        if ($product->img_path) {
-        // サーバー上のファイルを削除
-        Storage::delete('public/' . $product->img_path);
+            // データベースから削除
+            $product->delete();
+
+            return redirect()->route('products.index')
+                ->with('success', '商品「' . $product_name . '」を削除しました。');
+
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return back()->withErrors(['error' => '削除に失敗しました。']);
         }
-
-        // データをデータベースから削除
-        $product->delete();
-    
-        // 処理完了後、商品一覧画面へリダイレクト
-        return redirect()->route('products.index')->with('success', '商品「' . $product_name . '」を削除しました。');
     }
-
 }
+
+

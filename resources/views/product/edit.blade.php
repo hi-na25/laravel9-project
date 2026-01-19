@@ -12,7 +12,7 @@
 
                 <div class="card-body">
                     {{-- フォームの送信先を update メソッドへ、 method を POST にし、@method('PUT')で PUT/PATCH リクエストを偽装 --}}
-                    <form method="POST" action="{{ route('products.update', ['product' => $product->id]) }}" enctype="multipart/form-data">
+                    <form action="{{ route('products.update', ['product' => $product->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT') 
                         
@@ -63,7 +63,7 @@
                         @else
                             <p>現在の画像はありません</p>
                         @endif     
-                            <input class="form-control" type="file" id="image_path" name="image_path">
+                            <input class="form-control" type="file" id="img_path" name="img_path">
                         </div>
 
                         <button type="submit" class="btn btn-success">更新する</button>
