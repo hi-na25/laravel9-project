@@ -10,8 +10,18 @@
                     <a href="{{ route('products.index') }}" class="btn btn-sm btn-secondary float-end">一覧に戻る</a>
                 </div>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="card-body">
-                    <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
+                    <form method="POST" novalidate action="{{ route('products.store') }}" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="mb-3">
