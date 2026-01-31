@@ -10,6 +10,16 @@
                     <a href="{{ route('products.index') }}" class="btn btn-sm btn-secondary float-end">一覧に戻る</a>
                 </div>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                           @foreach ($errors->all() as $error)
+                               <li>{{ $error }}</li>
+                           @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
                 <div class="card-body">
                     {{-- フォームの送信先を update メソッドへ、 method を POST にし、@method('PUT')で PUT/PATCH リクエストを偽装 --}}
                     <form action="{{ route('products.update', ['product' => $product->id]) }}" method="POST" enctype="multipart/form-data">
