@@ -23,7 +23,7 @@
                         </tr>
                         <tr>
                             <th>商品名</th>
-                            <td>{{ $product->name }}</td>
+                            <td>{{ $product->product_name }}</td>
                         </tr>
                         <tr class="align-middle">
                            <th>商品画像</th>
@@ -39,7 +39,7 @@
                        </tr>
                         <tr>
                             <th>メーカー</th>
-                            <td>{{ $product->maker }}</td>
+                            <td>{{ $product->company->company_name }}</td>
                         </tr>
                         <tr>
                             <th>価格</th>

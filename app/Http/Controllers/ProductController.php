@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\product;
+use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
 
-class productController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +20,6 @@ class productController extends Controller
         $companies = Company::all();
 
         // 1. 商品モデル（product.php）を使って、productsテーブルの全データを取得
-        $products = product::all();
 
         // productモデルのクエリビルダーを開始
         $query = product::query();
