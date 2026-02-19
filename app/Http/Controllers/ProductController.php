@@ -34,8 +34,32 @@ class ProductController extends Controller
            $query->where('company_id', $request->company_id);
         }
     
-       // 絞り込み後のデータを取得
-       $products = $query->get();
+       // 価格 下限検索
+       if ($request->min_price) {
+           $query->where('price', '>=', $request->min_price);
+        }
+       // 価格 上限検索
+       if ($request->max_price) {
+           $query->where('price', '<=', $request->max_price);
+        }
+
+       // 在庫数 下限検索
+       if ($request->min_stock) {
+           $query->where('stock', '>=', $request->min_stock);
+        }
+       // 在庫数 上限検索
+       if ($request->max_stock) {
+           $query->where('stock', '<=', $request->max_stock);
+        }
+
+       // 並び替えの項目と順序を取得（指定がなければ初期表示は ID の降順）
+       $sort = $request->get('sort', 'id');
+       $direction = $request->get('direction', 'desc');
+
+       // クエリに並び替えを追加
+       $products = $query->orderBy($sort, $direction)->get();
+
+return view('product.index', compact('products', 'companies'));
 
         // 2. 取得した商品データ ($products) を一覧画面 ('product.index') に渡して表示
         return view('product.index', compact('products', 'companies'));
@@ -142,6 +166,16 @@ class ProductController extends Controller
             \Log::error($e->getMessage());
             return back()->withErrors(['error' => '削除に失敗しました。']);
         }
+
+        $product->delete();
+
+        // Ajax通信の場合は、成功のメッセージをJSONで返す
+        if (request()->ajax()) {
+            return response()->json(['success' => '商品を削除しました。']);
+        }
+
+        // 通常の削除（念のため残しておく）
+        return redirect()->route('products.index');
     }
 }
 
