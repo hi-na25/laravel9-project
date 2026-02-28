@@ -1,7 +1,11 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Route;
+
+// 購入処理APIのルート定義
+Route::post('/purchase', [SalesController::class, 'purchase']);
 
 /*
 |--------------------------------------------------------------------------
